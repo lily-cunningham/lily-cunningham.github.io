@@ -2,337 +2,164 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AdoptionAid — Warm Listing Generator (AI + Multi-Photo)</title>
-  <meta name="description" content="Enter shelter facts once; get an AI-written, warm adoption bio + Petfinder + social. Pick or auto-rank multiple photos; optional local image enhance. Single-file." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AdoptionAid — Helping Shelters Find Homes Faster</title>
+  <meta name="description" content="AdoptionAid turns pet photos and intake notes into adoption‑ready listings in minutes. Free to download and use." />
+  <meta name="theme-color" content="#FF6B6B" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="AdoptionAid — Helping Shelters Find Homes Faster" />
+  <meta property="og:description" content="Create consistent, adoption‑ready listings in minutes with AI—staff approve every word. Free download." />
+  <meta property="og:image" content="https://placekitten.com/1200/630" />
+  <meta name="twitter:card" content="summary_large_image" />
   <style>
-    :root{--bg:#FFF8F0;--ink:#2E2525;--muted:#6B5F5F;--card:#fff;--ring:#F0E6DC;--accent:#FF6B6B;--radius:14px}
+    :root{
+      --bg:#FFF8F0; --ink:#2E2525; --muted:#6B5F5F; --card:#FFFFFF; --ring:#F0E6DC; --accent:#FF6B6B; --accent-2:#FFD166; --radius:18px;
+    }
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial}
-    header,footer{text-align:center;padding:16px;background:#fff;border-bottom:1px solid var(--ring)}
-    footer{border-top:1px solid var(--ring);border-bottom:0}
-    main{max-width:1200px;margin:0 auto;padding:16px}
-    h1,h2{margin:0 0 10px}
-    .grid{display:grid;gap:16px}
-    @media(min-width:1100px){.grid{grid-template-columns:420px 1fr}}
-    .card{background:var(--card);border:1px solid var(--ring);border-radius:var(--radius);padding:14px}
-    label{display:block;margin-top:8px;font-weight:600}
-    input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d9d4ce;border-radius:10px;font:inherit;background:#fff}
-    textarea{min-height:96px;resize:vertical}
-    .row{display:flex;gap:8px;flex-wrap:wrap}
+    html:focus-within{scroll-behavior:smooth}
+    html,body{margin:0;padding:0;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial;color:var(--ink);background:var(--bg)}
+    a{color:inherit}
+
+    .wrap{max-width:980px;margin:0 auto;padding:0 18px}
+    .skip{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip:focus{left:10px;top:10px;width:auto;height:auto;background:#fff;border:2px solid var(--ink);padding:8px 10px;border-radius:10px;z-index:1000}
+
+    header{position:sticky;top:0;z-index:10;background:rgba(255,248,240,.92);backdrop-filter:saturate(1.05) blur(6px);border-bottom:1px solid var(--ring)}
+    .h-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}
+    .logo img{height:28px;width:auto;display:block}
+    nav a{margin-left:16px;font-weight:600;font-size:14px;text-decoration:none}
+
+    .hero{padding:56px 0 24px;text-align:center}
+    h1{font-size:clamp(28px,4.6vw,44px);line-height:1.08;margin:0 0 10px}
+    h2{font-size:clamp(20px,2.6vw,28px);line-height:1.2;margin:0 0 6px}
+    .lead{color:var(--muted);font-size:clamp(16px,2.2vw,18px);max-width:720px;margin:0 auto}
+    .row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+
+    .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ring);border-radius:999px;padding:12px 16px;font-weight:800;cursor:pointer;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+    .btn:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px}
+    .btn.primary{background:var(--accent);color:var(--ink)}
+    .btn.secondary{background:#0000;color:var(--ink)}
+
+    .hero-img{margin:22px auto 0;max-width:860px;border-radius:20px;border:1px solid var(--ring);overflow:hidden}
+    .hero-img img{width:100%;display:block}
+
+    .section{padding:30px 0}
     .muted{color:var(--muted)}
-    .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ring);border-radius:999px;padding:10px 14px;font-weight:800;background:#fff;cursor:pointer}
-    .btn.primary{background:var(--accent);color:#fff;border-color:#ff9e9e}
-    .out{white-space:pre-wrap;background:#fff;border:1px solid var(--ring);border-radius:12px;padding:12px}
-    .drop{border:2px dashed var(--ring);border-radius:12px;padding:12px;text-align:center;background:#fff}
-    .thumb{width:100%;height:220px;border:1px solid var(--ring);border-radius:12px;object-fit:cover;background:#fafafa}
-    .thumb.best{outline:3px solid var(--accent)}
-    .thumb-wrap{position:relative}
-    .badge{position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px;font-size:12px}
-    .fine{font-size:12px}
-    details summary{cursor:pointer}
-    .kv{display:grid;grid-template-columns:140px 1fr;gap:8px;align-items:center}
-    .status{font-size:12px;color:var(--muted);margin-top:6px}
+
+    .cards{display:grid;grid-template-columns:1fr;gap:14px;margin-top:12px}
+    @media(min-width:860px){.cards{grid-template-columns:repeat(3,1fr)}}
+    .card{background:var(--card);border:1px solid var(--ring);border-radius:var(--radius);padding:16px}
+    .card h3{margin:4px 0 8px;font-size:18px}
+
+    .well{background:#FFF1F1;border:1px dashed #FFC7C7;border-radius:16px;padding:14px}
+
+    footer{padding:40px 0 70px;text-align:center;color:var(--muted)}
+
+    @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto} .h-inner{backdrop-filter:none}}
   </style>
 </head>
 <body>
-  <header>
-    <h1>AdoptionAid — Warm Listing Generator</h1>
-    <p class="muted">AI rewrites the bio from your facts and ranks multiple photos. All in one file.</p>
+  <a class="skip" href="#main">Skip to content</a>
+  <header role="banner">
+    <div class="wrap h-inner">
+      <div class="logo" aria-label="AdoptionAid home">
+        <img src="logo.png" alt="AdoptionAid logo" loading="lazy">
+        <span aria-hidden="true">AdoptionAid</span>
+      </div>
+      <nav aria-label="Primary">
+        <a href="#overview">Overview</a>
+        <a href="#what">What it does</a>
+        <a href="#download">Download</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
   </header>
 
-  <main class="grid" id="app">
-    <!-- Left: inputs -->
-    <section class="card" aria-label="Inputs">
-      <h2>Pet details</h2>
-      <label>Name<input id="name" placeholder="Luna" autofocus></label>
-      <div class="row">
-        <div style="flex:1"><label>Species
-          <select id="species">
-            <option>Dog</option><option>Cat</option><option>Rabbit</option>
-            <option>Bird</option><option>Small animal</option><option>Farm animal</option><option>Other</option>
-          </select>
-        </label></div>
-        <div style="flex:1"><label>Breed (optional)<input id="breed" placeholder="Labrador mix"></label></div>
+  <main id="main">
+    <section class="hero wrap" id="top">
+      <h1>AdoptionAid — Helping Shelters Find Homes Faster</h1>
+      <p class="lead">Turn pet photos and intake notes into adoption‑ready posts in minutes — clearer bios, brighter photos, and captions ready for Petfinder and social. Free to download and use.</p>
+      <div class="row" role="group" aria-label="Primary calls to action">
+        <a class="btn primary" href="#download" aria-describedby="dl-desc">Download now</a>
+        <a class="btn secondary" href="#what">How it works</a>
       </div>
-      <div class="row">
-        <div style="flex:1"><label>Age<input id="age" placeholder="2 years"></label></div>
-        <div style="flex:1"><label>Sex<select id="sex"><option>Female</option><option>Male</option><option>Unknown</option></select></label></div>
-      </div>
-      <div class="row">
-        <div style="flex:1"><label>Size<select id="size"><option>Small</option><option>Medium</option><option>Large</option><option>XL</option></select></label></div>
-        <div style="flex:1"><label>Weight (optional)<input id="weight" placeholder="45 lb"></label></div>
-      </div>
-      <div class="row">
-        <div style="flex:1"><label>Coat / color (optional)<input id="coat" placeholder="short coat, black & white"></label></div>
-        <div style="flex:1"><label>Energy<select id="energy"><option>Low</option><option>Moderate</option><option>High</option></select></label></div>
-      </div>
-      <label>Personality & quirks (comma-separated)<input id="traits" placeholder="gentle, loves fetch, snuggle bug"></label>
-      <label>Loves to… (short phrases, comma-separated)<input id="likes" placeholder="chase bubbles, nap in sunny spots"></label>
-      <div class="row">
-        <div style="flex:1"><label>Good with (comma-separated)<input id="good" placeholder="dogs, kids"></label></div>
-        <div style="flex:1"><label>House-trained<select id="house"><option>Yes</option><option>No</option><option>In progress</option><option>Unknown</option></select></label></div>
-      </div>
-      <div class="row">
-        <div style="flex:1"><label>Crate-trained<select id="crate"><option>Yes</option><option>No</option><option>In progress</option><option>Unknown</option></select></label></div>
-        <div style="flex:1"><label>Spayed/Neutered<select id="spay"><option>Yes</option><option>No</option><option>Unknown</option></select></label></div>
-      </div>
-      <label>Medical or diet notes (factual)<textarea id="medical" placeholder="On a chicken-free diet; daily meds given by staff"></textarea></label>
-      <label>Ideal home (short sentence)<input id="home" placeholder="calm home with patient adopters"></label>
-      <div class="row">
-        <div style="flex:1"><label>Location<input id="loc" placeholder="City, ST"></label></div>
-        <div style="flex:1"><label>Shelter / Rescue<input id="shelter" placeholder="Org name"></label></div>
-      </div>
-      <h2 style="margin-top:10px">Photos</h2>
-      <div id="drop" class="drop" tabindex="0">
-        <div class="muted">Drop one or more photos, or use the picker</div>
-        <input id="file" type="file" accept="image/*" multiple style="margin-top:8px">
-        <div id="thumbs" style="margin-top:8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px"></div>
-      </div>
-
-      <h2 style="margin-top:10px">Tone</h2>
-      <div class="row">
-        <label class="row" style="align-items:center;gap:6px"><input type="radio" name="tone" value="warm" checked> Warm & cozy</label>
-        <label class="row" style="align-items:center;gap:6px"><input type="radio" name="tone" value="plain"> Plain & factual</label>
-      </div>
-
-      <h2 style="margin-top:10px">AI settings</h2>
-      <label>OpenAI API Key<input id="apiKey" type="password" placeholder="sk-..." /></label>
-      <label>API Base (optional)<input id="apiBase" placeholder="https://api.openai.com/v1" /></label>
-      <label>Model<select id="textModel">
-        <option value="gpt-4o-mini" selected>gpt-4o-mini</option>
-        <option value="gpt-4o">gpt-4o</option>
-        <option value="gpt-4.1">gpt-4.1</option>
-      </select></label>
-
-      <div class="row" style="margin-top:10px">
-        <button id="generate" class="btn primary" type="button">Generate AI Bio</button>
-        <button id="copyAll" class="btn" type="button">Copy all</button>
-        <button id="downloadAll" class="btn" type="button">Download text + best photo</button>
-      </div>
-      <div class="fine muted" style="margin-top:6px">“Assessment based on shelter observations; meet-and-greet required. Not medical advice.” is appended automatically.</div>
+      <p id="dl-desc" class="visually-hidden" hidden>Free download, no signup.</p>
+      <figure class="hero-img">
+        <img src="https://placekitten.com/1200/600" alt="Collage of adoptable pets looking toward the camera" width="1200" height="600">
+      </figure>
     </section>
 
-    <!-- Right: outputs -->
-    <section class="card" aria-label="Outputs">
-      <h2>Listing preview</h2>
-      <canvas id="canvas" width="900" height="600" style="width:100%;border:1px solid var(--ring);border-radius:12px;background:#fff"></canvas>
-      <div class="out" id="bio" style="margin-top:10px"></div>
-      <div class="out" id="pf" style="margin-top:10px"></div>
-      <div class="out" id="social" style="margin-top:10px"></div>
-      <div class="row" style="margin-top:8px">
-        <button class="btn" id="copyBio" type="button">Copy bio</button>
-        <button class="btn" id="copyPF" type="button">Copy Petfinder</button>
-        <button class="btn" id="copySocial" type="button">Copy social</button>
+    <section id="overview" class="wrap section">
+      <h2>Overview</h2>
+      <p class="muted">AdoptionAid is a student‑built resource to reduce time‑to‑listing and increase visibility for shelter animals. The goal is practical impact: shorter stays and more adoptions with the tools shelters already use.</p>
+      <ul class="muted">
+        <li><strong>Problem:</strong> creating listings takes time; photos and bios are inconsistent; posts get delayed.</li>
+        <li><strong>Approach:</strong> AI helps with photo selection/enhancement and clear, factual bios; staff approve before posting.</li>
+        <li><strong>Outcome target:</strong> &lt; 3 minutes per listing, +30% clicks, and a drop in length of stay.</li>
+      </ul>
+    </section>
+
+    <section id="what" class="wrap section">
+      <h2>What it does</h2>
+      <div class="cards" role="list">
+        <article class="card" role="listitem"><h3>Better photos</h3><p class="muted">Auto‑brightens and picks a clear, eye‑contact shot. Staff can override anytime.</p></article>
+        <article class="card" role="listitem"><h3>Clear bios</h3><p class="muted">Converts intake notes into concise, readable bios with behavior, home fit, and care notes.</p></article>
+        <article class="card" role="listitem"><h3>Ready to post</h3><p class="muted">One‑click copies for Petfinder and social with location‑aware hashtags.</p></article>
       </div>
+    </section>
+
+    <section id="download" class="wrap section">
+      <h2>Download</h2>
+      <p class="muted">Free, no signup. Works offline. Download the latest build and follow the quick start steps below.</p>
+      <div class="row">
+        <a class="btn primary" href="/downloads/AdoptionAid_v0.1.zip" download>Download v0.1 (ZIP)</a>
+        <a class="btn secondary" href="/downloads/AdoptionAid_UserGuide.pdf">User guide (PDF)</a>
+      </div>
+      <div class="well" style="margin-top:14px">
+        <ol class="muted" style="margin:0; padding-left:18px">
+          <li>Unzip the file.</li>
+          <li>Open <strong>AdoptionAid</strong> and choose photos + intake notes.</li>
+          <li>Review and approve the generated bio/captions. Export when ready.</li>
+        </ol>
+      </div>
+      <div class="well" style="margin-top:10px">
+        <strong>Safety:</strong> staff approve every word; no medical promises. Footer added to bios: <em>“Assessment based on shelter observations; meet‑and‑greet required. Not medical advice.”</em>
+      </div>
+    </section>
+
+    <section id="contact" class="wrap section">
+      <h2>Contact</h2>
+      <p class="muted">Email <span style="font-family:ui-monospace,Menlo,monospace;background:#FFF1F1;border:1px dashed #FFC7C7;border-radius:8px;padding:2px 6px">wildlineproject@gmail.com</span></p>
+      <a id="emailGeneral" class="btn secondary" href="#">Email me</a>
     </section>
   </main>
 
-  <footer>
-    <div>© <span id="y"></span> AdoptionAid • Offline, single-file</div>
+  <footer role="contentinfo">
+    <p>© <span id="y"></span> AdoptionAid • Built in San Carlos, CA</p>
   </footer>
 
-<script>
-(function(){
-  const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
-  $('#y').textContent=new Date().getFullYear();
-
-  // Photo handling
-  const file=$('#file'), drop=$('#drop'), thumbs=$('#thumbs'), canvas=$('#canvas'), ctx=canvas.getContext('2d');
-  let sources=[]; // {img:Image, score:number, file:File}
-  drop.addEventListener('dragover',e=>{e.preventDefault(); drop.style.background='#FFF1F1'});
-  drop.addEventListener('dragleave',()=>{drop.style.background=''});
-  drop.addEventListener('drop',e=>{e.preventDefault(); drop.style.background=''; handleFiles(e.dataTransfer.files)});
-  file.addEventListener('change',e=>handleFiles(e.target.files));
-
-  function handleFiles(list){
-    const files=Array.from(list||[]).filter(f=>/^image\\//.test(f.type));
-    files.forEach(f=>{
-      const url=URL.createObjectURL(f); const img=new Image();
-      img.onload=()=>{ sources.push({img, file:f, score:scoreImage(img)}); renderThumbs(); };
-      img.src=url;
-    });
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "AdoptionAid",
+    "url": "https://example.org/",
+    "email": "wildlineproject@gmail.com",
+    "description": "AdoptionAid helps animal shelters produce adoption‑ready listings quickly.",
+    "logo": "https://example.org/logo.png"
   }
-
-  function scoreImage(img){
-    // naive sharpness+brightness heuristic for local ranking
-    const tmp=document.createElement('canvas'); tmp.width=img.width; tmp.height=img.height;
-    const tctx=tmp.getContext('2d'); tctx.drawImage(img,0,0);
-    const data=tctx.getImageData(0,0,tmp.width,tmp.height).data;
-    let bright=0, contrast=0;
-    for(let i=0;i<data.length;i+=4){
-      const lum=0.299*data[i]+0.587*data[i+1]+0.114*data[i+2];
-      bright+=lum; contrast+=Math.abs(lum-128);
+  </script>
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+    const YOUR_EMAIL = 'wildlineproject@gmail.com';
+    function buildMailTo(subject, body){
+      return 'mailto:'+encodeURIComponent(YOUR_EMAIL)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
     }
-    bright/= (data.length/4); contrast/= (data.length/4);
-    return contrast - Math.abs(128-bright); // higher better
-  }
-
-  function renderThumbs(){
-    thumbs.innerHTML='';
-    sources.sort((a,b)=>b.score-a.score);
-    sources.forEach((src,i)=>{
-      const wrap=document.createElement('div'); wrap.className='thumb-wrap';
-      const im=document.createElement('img'); im.src=src.img.src; im.className='thumb'; if(i===0) im.classList.add('best');
-      if(i===0){ const b=document.createElement('div'); b.className='badge'; b.textContent='Best'; wrap.appendChild(b);}
-      wrap.appendChild(im); thumbs.appendChild(wrap);
-    });
-    draw();
-  }
-
-  function draw(){
-    ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
-    if(sources[0]){
-      const source=sources[0].img;
-      const s=Math.min(canvas.width/source.width, canvas.height/source.height);
-      const w=Math.round(source.width*s), h=Math.round(source.height*s);
-      const x=(canvas.width-w)>>1, y=(canvas.height-h)>>1;
-      ctx.drawImage(source,x,y,w,h);
+    const genBtn = document.getElementById('emailGeneral');
+    if(genBtn){
+      genBtn.href = buildMailTo('AdoptionAid question', 'Hi! I have a question about AdoptionAid:');
     }
-  }
-  // ---------- helpers for text + hashtags ----------
-  const val=id=>($('#'+id)?.value||'').trim();
-  const radio=name=>document.querySelector(`input[name="${name}"]:checked`)?.value||'';
-  const listify=s=>(s||'').split(',').map(x=>x.trim()).filter(Boolean);
-  const titleCase=s=>s.replace(/\w\S*/g,t=>t[0].toUpperCase()+t.slice(1).toLowerCase());
-  function hashtags(){
-    const sp=(val('species')||'').toLowerCase();
-    const city=(val('loc').split(',')[0]||'').trim().replace(/\s+/g,'');
-    const base=['#adopt','#adoptdontshop','#rescue','#shelterpet','#adoptionaid'];
-    if(sp.includes('dog')) base.push('#dog','#rescuedog');
-    else if(sp.includes('cat')) base.push('#cat','#rescuecat');
-    else if(sp.includes('rabbit')) base.push('#rabbit','#rescuerabbit');
-    else if(sp.includes('bird')) base.push('#bird','#rescuebird');
-    else if(sp.includes('small')) base.push('#smallanimal');
-    else if(sp.includes('farm')) base.push('#farmanimal');
-    if(city) base.unshift('#'+city);
-    return base.join(' ');
-  }
-
-  // ---------- AI prompt + generation ----------
-  function collectFacts(){
-    const species=val('species').toLowerCase(); const breed=val('breed');
-    return {
-      name: val('name')||'This pet',
-      species, breed,
-      age: val('age'), sex:(val('sex')||'').toLowerCase(), size:(val('size')||'').toLowerCase(), weight: val('weight'),
-      coat: val('coat'), energy:(val('energy')||'').toLowerCase(),
-      traits: listify(val('traits')), likes: listify(val('likes')),
-      good: (val('good')||'').toLowerCase(), house:(val('house')||'').toLowerCase(), crate:(val('crate')||'').toLowerCase(), spay:(val('spay')||'').toLowerCase(),
-      medical: val('medical'), home: val('home'),
-      loc: val('loc'), shelter: val('shelter'),
-      tone: radio('tone')
-    };
-  }
-
-  function buildPrompts(f){
-    const factsJSON=JSON.stringify(f);
-    const system = [
-      'You are a senior copywriter for an animal rescue.',
-      'Write unique, adoption-optimized bios from factual notes.',
-      'Voice: warm, concrete, human. No cutesy baby talk. No emojis.',
-      'Length: 110–170 words, 2 short paragraphs. Vary sentence openings and rhythm.',
-      'Emphasize adoptability: temperament, home fit, training, who the pet is good with.',
-      'Show, not tell: convert traits into small moments (e.g., "taps your knee for another toss").',
-      'No medical claims; keep care notes neutral and brief.',
-      'No absolutes; prefer calibrated language ("has done well with…") when supported.',
-      'End with a clear call to action for a meet-and-greet.',
-      'NEVER invent facts. If info is missing, omit it gracefully.'
-    ].join(' ');
-    const user = [
-      `Facts (JSON): ${factsJSON}`,
-      'Return ONLY JSON with keys {"bio","pf","social"}.',
-      'bio: 110–170 words, 2 short paragraphs, flowing prose, no bullets.',
-      'Include this disclaimer as the final sentence, exactly: "Assessment based on shelter observations; meet-and-greet required. Not medical advice."',
-      'pf: one sentence stating availability and location with an invitation to contact.',
-      `social: two short captions (<=140 chars each) with natural hooks + hashtags: ${hashtags()}`
-    ].join('\n');
-    return {system,user};
-  }
-
-  async function callOpenAI(messages){
-    const base=(val('apiBase')||'https://api.openai.com/v1').replace(/\/$/,'');
-    const key=val('apiKey'); const model=val('textModel')||'gpt-4o-mini';
-    if(!key) throw new Error('Add your API key in AI settings.');
-    const res=await fetch(base+'/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-      body:JSON.stringify({model, messages, temperature:0.85, response_format:{type:'json_object'}})
-    });
-    const j=await res.json();
-    if(!res.ok) throw new Error(j.error?.message || ('HTTP '+res.status));
-    return j.choices?.[0]?.message?.content||'';
-  }
-
-  function fallbackBio(){
-    const name=val('name')||'This pet'; const short=name.split(' ')[0];
-    const species=val('species').toLowerCase(); const breed=val('breed'); const speciesStr=breed?`${breed} ${species}`:species;
-    const age=val('age'); const sex=(val('sex')||'').toLowerCase(); const size=(val('size')||'').toLowerCase(); const weight=val('weight');
-    const coat=val('coat'); const energy=(val('energy')||'').toLowerCase();
-    const traits=listify(val('traits')); const likes=listify(val('likes'));
-    const good=(val('good')||''); const house=(val('house')||'').toLowerCase(); const crate=(val('crate')||'').toLowerCase(); const spay=(val('spay')||'').toLowerCase();
-    const medical=val('medical'); const home=val('home'); const where=val('loc');
-    const z=[];
-    z.push(`${name} is a ${age?age+', ':''}${speciesStr}${sex?' '+sex:''}${size?' (~'+size+')':''}${weight?' around '+weight:''}.`);
-    if(coat) z.push(`With a ${coat} coat, ${short} turns heads wherever ${sex==='female'?'she':sex==='male'?'he':'they'} goes.`);
-    if(traits.length) z.push(titleCase(traits.join('; '))+'.');
-    if(likes.length) z.push(`${short} loves ${likes.join(', ')}.`);
-    if(good) z.push(`Has done well with ${good.toLowerCase()}.`);
-    if(energy) z.push(`Energy level: ${energy}.`);
-    if(house) z.push(`House-trained: ${house}.`);
-    if(crate) z.push(`Crate-trained: ${crate}.`);
-    if(spay) z.push(`Spayed/Neutered: ${spay}.`);
-    if(medical) z.push(`Care notes: ${medical.replace(/\.$/, '')}.`);
-    if(home) z.push(`Ideal home: ${home.replace(/\.$/, '')}.`);
-    if(where) z.push(`Currently in ${where}.`);
-    z.push('Assessment based on shelter observations; meet-and-greet required. Not medical advice.');
-    return z.join(' ');
-  }
-  function buildPF(){ const n=val('name')||'This pet'; const where=val('loc')||'our area'; return `${n} is available for adoption in ${where}. Contact the shelter to learn more and schedule a meet-and-greet.`; }
-  function buildSocial(){ const n=val('name')||'This pet'; return `${n} is looking for a home! ${hashtags()}`; }
-
-  async function generateAIText(){
-    const facts=collectFacts(); const {system,user}=buildPrompts(facts);
-    try{
-      const json=await callOpenAI([{role:'system',content:system},{role:'user',content:user}]);
-      const parsed=JSON.parse(json);
-      if(!parsed.bio || !parsed.pf || !parsed.social) throw new Error('Incomplete AI JSON');
-      const socialOut = Array.isArray(parsed.social) ? parsed.social.join('\n') : String(parsed.social);
-      return {bio:String(parsed.bio).trim(), pf:String(parsed.pf).trim(), social:socialOut.trim()};
-    }catch(e){
-      console.warn('AI failed, using fallback:', e);
-      return {bio:fallbackBio(), pf:buildPF(), social:buildSocial()};
-    }
-  }
-
-  // ---------- Buttons / interactions ----------
-  function renderStatic(){ $('#bio').textContent=fallbackBio(); $('#pf').textContent=buildPF(); $('#social').textContent=buildSocial(); }
-  renderStatic();
-
-  $('#generate').addEventListener('click', async ()=>{
-    // ensure ranking done for preview
-    if(!sources.length) renderThumbs();
-    const out=await generateAIText();
-    $('#bio').textContent=out.bio;
-    $('#pf').textContent=out.pf;
-    $('#social').textContent=out.social;
-    $('#bio').scrollIntoView({behavior:'smooth'});
-  });
-
-  $$('#copyBio,#copyPF,#copySocial,#copyAll').forEach(btn=>btn?.addEventListener('click', (e)=>{
-    const id=e.target.id;
-    const text=id==='copyBio'?$('#bio').textContent:id==='copyPF'?$('#pf').textContent:id==='copySocial'?$('#social').textContent:`BIO\n\n${$('#bio').textContent}\n\nPETFINDER\n\n${$('#pf').textContent}\n\nSOCIAL\n\n${$('#social').textContent}\n`;
-    navigator.clipboard.writeText(text);
-  }));
-
-  $('#downloadAll').addEventListener('click', ()=>{
-    const name=(val('name')||'pet').replace(/\s+/g,'_');
-    const txt=new Blob([`BIO\n\n${$('#bio').textContent}\n\nPETFINDER\n\n${$('#pf').textContent}\n\nSOCIAL\n\n${$('#social').textContent}\n`],{type:'text/plain'});
-    const a=document.createElement('a'); a.download=`${name}_listing.txt`; a.href=URL.createObjectURL(txt); a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),3000);
-    if(sources[0]){ const a2=document.createElement('a'); a2.download=`${name}_best_photo.jpg`; a2.href=$('#canvas').toDataURL('image/jpeg',0.9); a2.click(); }
-  });
-
-})(); // end IIFE
-</script>
+  </script>
 </body>
 </html>
